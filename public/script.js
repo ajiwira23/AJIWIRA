@@ -82,7 +82,7 @@
     spokenOnce.add('hero');
     sfxHonk();
     // TIDAK ADA setTimeout. Narasi dimulai langsung.
-    speakRobot("Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling. Sound on.", 'welcome');
+    speakRobot("Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling.;
   }
 
   ['click', 'touchstart', 'keydown'].forEach(evt => {
@@ -160,11 +160,11 @@
 
   const sectionScripts = {
     hero: "Yohoho. Ini portofolioku. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
-    about: "Oookey, About Me Thaimeee.",
+    about: "Oookey, About Me Thaime.",
     work: "Selamat datang di work zone.",
     expertise: "Skill check.",
     experience: "Journey far.",
-    contact: "Last page. yaah sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. TAEK!."
+    contact: "Last page. yaah sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS MERONGOSS!."
   };
 
   function pickNaturalMaleVoice() {
