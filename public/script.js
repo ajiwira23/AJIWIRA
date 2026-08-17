@@ -88,10 +88,23 @@
     speaking = false;
   }
 
-  function unlockAudio() {
+  async function unlockAudio() {
     if (audioEnabled) return;
     const ctx = getCtx();
     if (!ctx) return;
+
+    if (ctx.state === 'suspended') {
+      try { await ctx.resume(); } catch (e) {}
+    }
+
+    // PENTING: kalau browser masih memblokir autoplay, context akan tetap
+    // 'suspended' di titik ini walau tidak melempar error. Kalau kita tetap
+    // menandai audioEnabled = true di sini, gesture asli (klik/tap) berikutnya
+    // tidak akan pernah mencoba lagi (karena guard di baris pertama fungsi ini)
+    // — akibatnya sambutan jadi hilang selamanya walau tidak pernah benar-benar
+    // terdengar. Jadi kita berhenti dulu di sini dan biarkan gesture asli mencoba.
+    if (ctx.state !== 'running') return;
+
     try {
       const buf = ctx.createBuffer(1, 1, 22050);
       const src = ctx.createBufferSource();
@@ -109,11 +122,12 @@
 
   // Percobaan autoplay: jalan sesegera mungkin tanpa menunggu klik.
   // Kalau browser memblokir (AudioContext tetap 'suspended'), gesture pertama
-  // (click/touchstart/keydown) di bawah ini akan jadi fallback otomatis.
-  function tryAutoUnlock() {
+  // (click/touchstart/keydown) di bawah ini akan jadi fallback otomatis, karena
+  // unlockAudio() di atas SENGAJA tidak menandai audioEnabled kalau gagal.
+  async function tryAutoUnlock() {
     if (unlockAttempted || audioEnabled) return;
     unlockAttempted = true;
-    unlockAudio();
+    await unlockAudio();
   }
 
   ['click', 'touchstart', 'keydown'].forEach(evt => {
