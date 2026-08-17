@@ -165,7 +165,7 @@
   }
 
   const sectionScripts = {
-    hero: "Yohoho. Ini portofolioku. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
+    hero: "Yossha. Ini portofolioku. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
     about: "Yokey, About me thaim.",
     work: "Work zone.",
     expertise: "Skill check.",
