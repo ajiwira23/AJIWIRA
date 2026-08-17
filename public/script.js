@@ -1,5 +1,9 @@
 /**
  * Aria Voss — Parallax + Anti-Gravity + Mood + Game SFX + Robot Voice
+ * PERBAIKAN:
+ *  - Fix SyntaxError (string yang tidak ditutup di unlockAudio)
+ *  - Anti-penumpukan suara pakai sistem token (request lama otomatis dibatalkan)
+ *  - Percobaan autoplay begitu halaman siap, dengan fallback gesture (klik/tap/keydown)
  */
 (function () {
   'use strict';
@@ -25,9 +29,17 @@
   // 7) Audio dipreload di background dan disimpan di Cache Storage.
   // 8) Jika ElevenLabs belum siap/gagal, suara sistem langsung menjadi fallback.
   // 9) Efek cyborg-clown ringan dibuat dengan Web Audio agar ucapan Indonesia tetap jelas.
+  // 10) ANTI-PENUMPUKAN: setiap panggilan speakRobot() punya "token" unik. Kalau ada
+  //     panggilan baru sebelum yang lama selesai loading, hasil yang lama otomatis
+  //     dibuang begitu ia datang — jadi tidak ada dua suara yang saling menimpa.
   //
   // PENTING: "tanpa jeda" tidak berarti network latency 0 ms. Yang dihilangkan adalah
   // semua delay buatan dan penantian playback yang bisa dikontrol oleh kode.
+  //
+  // CATATAN AUTOPLAY: browser modern memblokir audio otomatis sebelum user pernah
+  // berinteraksi dengan halaman/domain. Kode ini mencoba autoplay sesegera mungkin,
+  // tapi kalau diblokir browser, suara akan otomatis menyala begitu user melakukan
+  // interaksi pertama (klik/tap/keydown) — itu bukan bug, itu batasan browser.
 
   let audioEnabled = false;
   let soundOn = true;
@@ -37,6 +49,12 @@
   let lastSpokenSection = '';
   let speaking = false;
   let activeSource = null;
+  let unlockAttempted = false;
+
+  // Token global anti-penumpukan: tiap kali ada permintaan bicara baru, token naik.
+  // Permintaan lama yang masih dalam proses loading akan mengecek token ini sebelum
+  // benar-benar diputar, supaya tidak ada dua narasi/efek yang tumpang tindih.
+  let speechToken = 0;
 
   const ELEVEN = {
     endpoint: '/api/tts',
@@ -44,6 +62,9 @@
     model: 'eleven_flash_v2_5',
     enabled: !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.protocol !== 'file:'
   };
+
+  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling. Sound on.";
+  const WELCOME_KEY = 'welcome';
 
   // AudioBuffer disimpan selama halaman hidup. Cache Storage menyimpan hasil antar reload.
   const elevenCache = new Map();
@@ -82,7 +103,17 @@
     spokenOnce.add('hero');
     sfxHonk();
     // TIDAK ADA setTimeout. Narasi dimulai langsung.
-    speakRobot("Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling.;
+    // Cache key disamakan dengan yang dipakai di preloadSpeech() supaya tidak fetch dua kali.
+    speakRobot(WELCOME_TEXT, WELCOME_KEY);
+  }
+
+  // Percobaan autoplay: jalan sesegera mungkin tanpa menunggu klik.
+  // Kalau browser memblokir (AudioContext tetap 'suspended'), gesture pertama
+  // (click/touchstart/keydown) di bawah ini akan jadi fallback otomatis.
+  function tryAutoUnlock() {
+    if (unlockAttempted || audioEnabled) return;
+    unlockAttempted = true;
+    unlockAudio();
   }
 
   ['click', 'touchstart', 'keydown'].forEach(evt => {
@@ -228,10 +259,7 @@
     if (preloadStarted) return;
     preloadStarted = true;
     const jobs = Object.entries(sectionScripts).map(([id, text]) => loadSpeechBuffer(text, id));
-    jobs.push(loadSpeechBuffer(
-      "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling. Sound on.",
-      'welcome'
-    ));
+    jobs.push(loadSpeechBuffer(WELCOME_TEXT, WELCOME_KEY));
     Promise.allSettled(jobs).catch(() => {});
   }
 
@@ -302,14 +330,23 @@
     return true;
   }
 
-  async function speakEleven(text, cacheKey) {
+  // token diteruskan dari speakRobot supaya kalau ada permintaan yang lebih baru
+  // masuk selama fetch/decode berlangsung, hasil yang basi ini tidak diputar
+  // menimpa suara yang lebih baru (ini yang mencegah "penumpukan").
+  async function speakEleven(text, cacheKey, token) {
     const buffer = elevenCache.get(cacheKey || text) || await loadSpeechBuffer(text, cacheKey || text);
     if (!buffer) return false;
+    if (token !== undefined && token !== speechToken) {
+      // Sudah ada permintaan bicara yang lebih baru selama kita menunggu buffer ini.
+      // Anggap "berhasil" (supaya tidak jatuh ke fallback suara sistem) tapi jangan diputar.
+      return true;
+    }
     return playCyborgClown(buffer);
   }
 
-  function speakSystem(text) {
+  function speakSystem(text, token) {
     if (!window.speechSynthesis) return;
+    if (token !== undefined && token !== speechToken) return; // sudah basi, jangan diputar
     try {
       stopActiveVoice();
       window.speechSynthesis.cancel();
@@ -332,13 +369,19 @@
 
   async function speakRobot(text, cacheKey) {
     if (!soundOn || !audioEnabled) return;
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
 
-    // Jika buffer sudah dipreload/cache, ElevenLabs langsung dimainkan.
-    const ok = await speakEleven(text, cacheKey || text);
+    // Setiap panggilan baru menaikkan token global dan langsung membatalkan
+    // antrian suara sistem yang lama. Permintaan lama yang masih menunggu buffer
+    // akan mengecek token ini sebelum benar-benar diputar (lihat speakEleven/speakSystem).
+    const myToken = ++speechToken;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    stopActiveVoice();
+
+    const ok = await speakEleven(text, cacheKey || text, myToken);
+    if (myToken !== speechToken) return; // sudah ada permintaan lebih baru, berhenti di sini
     if (!ok) {
       // Fallback langsung — jangan membuat user menunggu API.
-      speakSystem(text);
+      speakSystem(text, myToken);
     }
   }
 
@@ -378,6 +421,15 @@
   } else {
     Promise.resolve().then(preloadSpeech);
   }
+
+  // Coba autoplay sesegera mungkin (tanpa menunggu klik). Kalau browser
+  // memblokirnya, listener click/touchstart/keydown di atas tetap jadi fallback.
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    tryAutoUnlock();
+  } else {
+    document.addEventListener('DOMContentLoaded', tryAutoUnlock, { once: true });
+  }
+  window.addEventListener('load', tryAutoUnlock, { once: true });
 
   // ========== MOOD ==========
   const moods = {
