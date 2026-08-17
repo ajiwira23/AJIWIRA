@@ -1,10 +1,4 @@
-/**
- * Aria Voss — Parallax + Anti-Gravity + Mood + Game SFX + Robot Voice
- * PERBAIKAN:
- *  - Fix SyntaxError (string yang tidak ditutup di unlockAudio)
- *  - Anti-penumpukan suara pakai sistem token (request lama otomatis dibatalkan)
- *  - Percobaan autoplay begitu halaman siap, dengan fallback gesture (klik/tap/keydown)
- */
+/**/
 (function () {
   'use strict';
 
@@ -15,31 +9,7 @@
   // ========== AUDIO SYSTEM ==========
   //
   // PANDUAN AUDIO — BACA JIKA INGIN MENGUBAH SUARA
-  // -------------------------------------------------
-  // 1) ElevenLabs TIDAK lagi dipanggil langsung dari browser.
-  // 2) Browser hanya memanggil /api/tts milik Cloudflare Worker.
-  // 3) API key ElevenLabs disimpan sebagai Cloudflare Secret:
-  //       ELEVENLABS_API_KEY
-  //    Jangan menaruh sk_... di file ini.
-  // 4) Voice ID bukan rahasia. Saat ini memakai voice ID lama project:
-  //       cDtCy1lw43ktxm1uFIWJ
-  //    Jika voice itu tidak ada di akunmu, ubah VOICE_ID di _worker.js.
-  // 5) Model: eleven_flash_v2_5 — mendukung Bahasa Indonesia dan latensi rendah.
-  // 6) Tidak ada delay narasi 280 ms / 500 ms.
-  // 7) Audio dipreload di background dan disimpan di Cache Storage.
-  // 8) Jika ElevenLabs belum siap/gagal, suara sistem langsung menjadi fallback.
-  // 9) Efek cyborg-clown ringan dibuat dengan Web Audio agar ucapan Indonesia tetap jelas.
-  // 10) ANTI-PENUMPUKAN: setiap panggilan speakRobot() punya "token" unik. Kalau ada
-  //     panggilan baru sebelum yang lama selesai loading, hasil yang lama otomatis
-  //     dibuang begitu ia datang — jadi tidak ada dua suara yang saling menimpa.
-  //
-  // PENTING: "tanpa jeda" tidak berarti network latency 0 ms. Yang dihilangkan adalah
-  // semua delay buatan dan penantian playback yang bisa dikontrol oleh kode.
-  //
-  // CATATAN AUTOPLAY: browser modern memblokir audio otomatis sebelum user pernah
-  // berinteraksi dengan halaman/domain. Kode ini mencoba autoplay sesegera mungkin,
-  // tapi kalau diblokir browser, suara akan otomatis menyala begitu user melakukan
-  // interaksi pertama (klik/tap/keydown) — itu bukan bug, itu batasan browser.
+  // 
 
   let audioEnabled = false;
   let soundOn = true;
@@ -51,9 +21,7 @@
   let activeSource = null;
   let unlockAttempted = false;
 
-  // Token global anti-penumpukan: tiap kali ada permintaan bicara baru, token naik.
-  // Permintaan lama yang masih dalam proses loading akan mengecek token ini sebelum
-  // benar-benar diputar, supaya tidak ada dua narasi/efek yang tumpang tindih.
+  // 
   let speechToken = 0;
 
   const ELEVEN = {
@@ -63,7 +31,7 @@
     enabled: !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.protocol !== 'file:'
   };
 
-  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling. Sound on.";
+  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling.";
   const WELCOME_KEY = 'welcome';
 
   // AudioBuffer disimpan selama halaman hidup. Cache Storage menyimpan hasil antar reload.
@@ -97,12 +65,7 @@
       try { await ctx.resume(); } catch (e) {}
     }
 
-    // PENTING: kalau browser masih memblokir autoplay, context akan tetap
-    // 'suspended' di titik ini walau tidak melempar error. Kalau kita tetap
-    // menandai audioEnabled = true di sini, gesture asli (klik/tap) berikutnya
-    // tidak akan pernah mencoba lagi (karena guard di baris pertama fungsi ini)
-    // — akibatnya sambutan jadi hilang selamanya walau tidak pernah benar-benar
-    // terdengar. Jadi kita berhenti dulu di sini dan biarkan gesture asli mencoba.
+    // 
     if (ctx.state !== 'running') return;
 
     try {
@@ -120,23 +83,14 @@
     speakRobot(WELCOME_TEXT, WELCOME_KEY);
   }
 
-  // Percobaan autoplay: jalan sesegera mungkin tanpa menunggu klik.
-  // Kalau browser memblokir (AudioContext tetap 'suspended'), gesture pertama
-  // (click/touchstart/keydown) di bawah ini akan jadi fallback otomatis, karena
-  // unlockAudio() di atas SENGAJA tidak menandai audioEnabled kalau gagal.
+  // 
   async function tryAutoUnlock() {
     if (unlockAttempted || audioEnabled) return;
     unlockAttempted = true;
     await unlockAudio();
   }
 
-  // 'scroll' dan 'wheel' ditambahkan supaya scroll pertama juga langsung
-  // menyalakan audio/SFX/suara robot — tidak perlu tunggu klik dulu.
-  // Tetap dipertahankan bareng click/touchstart/keydown sebagai fallback,
-  // karena sebagian browser tidak menganggap scroll sebagai "gesture" yang
-  // sah untuk lolos autoplay policy (unlockAudio() sendiri sudah menangani
-  // itu: kalau context masih 'suspended', audioEnabled tidak ditandai true,
-  // jadi gesture berikutnya tetap bisa mencoba lagi).
+  // 
   ['click', 'touchstart', 'keydown', 'scroll', 'wheel'].forEach(evt => {
     document.addEventListener(evt, unlockAudio, { once: true, passive: true });
   });
@@ -351,15 +305,12 @@
     return true;
   }
 
-  // token diteruskan dari speakRobot supaya kalau ada permintaan yang lebih baru
-  // masuk selama fetch/decode berlangsung, hasil yang basi ini tidak diputar
-  // menimpa suara yang lebih baru (ini yang mencegah "penumpukan").
+  // 
   async function speakEleven(text, cacheKey, token) {
     const buffer = elevenCache.get(cacheKey || text) || await loadSpeechBuffer(text, cacheKey || text);
     if (!buffer) return false;
     if (token !== undefined && token !== speechToken) {
-      // Sudah ada permintaan bicara yang lebih baru selama kita menunggu buffer ini.
-      // Anggap "berhasil" (supaya tidak jatuh ke fallback suara sistem) tapi jangan diputar.
+      // 
       return true;
     }
     return playCyborgClown(buffer);
@@ -391,9 +342,7 @@
   async function speakRobot(text, cacheKey) {
     if (!soundOn || !audioEnabled) return;
 
-    // Setiap panggilan baru menaikkan token global dan langsung membatalkan
-    // antrian suara sistem yang lama. Permintaan lama yang masih menunggu buffer
-    // akan mengecek token ini sebelum benar-benar diputar (lihat speakEleven/speakSystem).
+    // 
     const myToken = ++speechToken;
     if (window.speechSynthesis) window.speechSynthesis.cancel();
     stopActiveVoice();
@@ -438,7 +387,7 @@
 
   // Mulai pemanasan suara setelah dokumen siap; tidak menghalangi rendering UI.
   if ('requestIdleCallback' in window) {
-    requestIdleCallback(preloadSpeech, { timeout: 1200 });
+    requestIdleCallback(preloadSpeech, { timeout: 4000 });
   } else {
     Promise.resolve().then(preloadSpeech);
   }
