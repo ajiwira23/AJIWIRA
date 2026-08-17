@@ -1,6 +1,6 @@
 {
   "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
-  "name": "aji-wira-portfolio",
+  "name": "ajiwira",
   "main": "src/index.js",
   "compatibility_date": "2026-08-18",
   "assets": {
