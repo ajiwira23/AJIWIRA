@@ -14,7 +14,32 @@
 
   // ========== AUDIO SYSTEM ==========
   //
-  //  batasan browser.
+  // PANDUAN AUDIO — BACA JIKA INGIN MENGUBAH SUARA
+  // -------------------------------------------------
+  // 1) ElevenLabs TIDAK lagi dipanggil langsung dari browser.
+  // 2) Browser hanya memanggil /api/tts milik Cloudflare Worker.
+  // 3) API key ElevenLabs disimpan sebagai Cloudflare Secret:
+  //       ELEVENLABS_API_KEY
+  //    Jangan menaruh sk_... di file ini.
+  // 4) Voice ID bukan rahasia. Saat ini memakai voice ID lama project:
+  //       cDtCy1lw43ktxm1uFIWJ
+  //    Jika voice itu tidak ada di akunmu, ubah VOICE_ID di _worker.js.
+  // 5) Model: eleven_flash_v2_5 — mendukung Bahasa Indonesia dan latensi rendah.
+  // 6) Tidak ada delay narasi 280 ms / 500 ms.
+  // 7) Audio dipreload di background dan disimpan di Cache Storage.
+  // 8) Jika ElevenLabs belum siap/gagal, suara sistem langsung menjadi fallback.
+  // 9) Efek cyborg-clown ringan dibuat dengan Web Audio agar ucapan Indonesia tetap jelas.
+  // 10) ANTI-PENUMPUKAN: setiap panggilan speakRobot() punya "token" unik. Kalau ada
+  //     panggilan baru sebelum yang lama selesai loading, hasil yang lama otomatis
+  //     dibuang begitu ia datang — jadi tidak ada dua suara yang saling menimpa.
+  //
+  // PENTING: "tanpa jeda" tidak berarti network latency 0 ms. Yang dihilangkan adalah
+  // semua delay buatan dan penantian playback yang bisa dikontrol oleh kode.
+  //
+  // CATATAN AUTOPLAY: browser modern memblokir audio otomatis sebelum user pernah
+  // berinteraksi dengan halaman/domain. Kode ini mencoba autoplay sesegera mungkin,
+  // tapi kalau diblokir browser, suara akan otomatis menyala begitu user melakukan
+  // interaksi pertama (klik/tap/keydown) — itu bukan bug, itu batasan browser.
 
   let audioEnabled = false;
   let soundOn = true;
@@ -26,7 +51,9 @@
   let activeSource = null;
   let unlockAttempted = false;
 
-
+  // Token global anti-penumpukan: tiap kali ada permintaan bicara baru, token naik.
+  // Permintaan lama yang masih dalam proses loading akan mengecek token ini sebelum
+  // benar-benar diputar, supaya tidak ada dua narasi/efek yang tumpang tindih.
   let speechToken = 0;
 
   const ELEVEN = {
@@ -36,7 +63,7 @@
     enabled: !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.protocol !== 'file:'
   };
 
-  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling.";
+  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling. Sound on.";
   const WELCOME_KEY = 'welcome';
 
   // AudioBuffer disimpan selama halaman hidup. Cache Storage menyimpan hasil antar reload.
@@ -103,7 +130,14 @@
     await unlockAudio();
   }
 
-  ['click', 'touchstart', 'keydown'].forEach(evt => {
+  // 'scroll' dan 'wheel' ditambahkan supaya scroll pertama juga langsung
+  // menyalakan audio/SFX/suara robot — tidak perlu tunggu klik dulu.
+  // Tetap dipertahankan bareng click/touchstart/keydown sebagai fallback,
+  // karena sebagian browser tidak menganggap scroll sebagai "gesture" yang
+  // sah untuk lolos autoplay policy (unlockAudio() sendiri sudah menangani
+  // itu: kalau context masih 'suspended', audioEnabled tidak ditandai true,
+  // jadi gesture berikutnya tetap bisa mencoba lagi).
+  ['click', 'touchstart', 'keydown', 'scroll', 'wheel'].forEach(evt => {
     document.addEventListener(evt, unlockAudio, { once: true, passive: true });
   });
 
