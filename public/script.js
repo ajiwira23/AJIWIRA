@@ -166,11 +166,11 @@
 
   const sectionScripts = {
     hero: "Yohoho. Ini portofolioku. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
-    about: "Oookey, About Me Thaime.",
-    work: "Selamat datang di work zone.",
+    about: "Yokey, About me thaim.",
+    work: "Work zone.",
     expertise: "Skill check.",
-    experience: "Journey far.",
-    contact: "Last page. yaah sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS MERONGOSS!."
+    experience: "Jhourney far.",
+    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS MERONGOSS!."
   };
 
   function pickNaturalMaleVoice() {
