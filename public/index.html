@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="description" content="Aji Wira — Full-Stack Developer. Scroll through seasons of creativity.">
+  <meta name="theme-color" content="#06080d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Aji Wira | Portfolio</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2306080d'/><rect x='8' y='8' width='16' height='16' rx='2' fill='%234ade80'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mood="midnight">
+  <!-- Atmosphere -->
+  <div class="atmosphere" id="atmosphere" aria-hidden="true">
+    <div class="atm-glow atm-1"></div>
+    <div class="atm-glow atm-2"></div>
+    <div class="atm-glow atm-3"></div>
+  </div>
+
+  <!-- Parallax background layers -->
+  <div class="parallax-bg" id="parallax-bg" aria-hidden="true">
+    <div class="p-layer p-far" data-speed="0.15"></div>
+    <div class="p-layer p-mid" data-speed="0.35"></div>
+    <div class="p-layer p-near" data-speed="0.55"></div>
+  </div>
+
+  <!-- Floating anti-gravity objects -->
+  <div class="antigrav" id="antigrav" aria-hidden="true">
+    <div class="ag-block ag-1"></div>
+    <div class="ag-block ag-2"></div>
+    <div class="ag-block ag-3"></div>
+    <div class="ag-block ag-4"></div>
+    <div class="ag-block ag-5"></div>
+    <div class="ag-orb ag-o1"></div>
+    <div class="ag-orb ag-o2"></div>
+  </div>
+
+  <div id="loader" class="loader">
+    <div class="loader-content">
+      <div class="loader-cube"><div class="cube-face"></div></div>
+      <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
+      <p class="loader-label">Entering the world...</p>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress"></div>
+  <div id="cursor" class="cursor"></div>
+  <div id="cursor-dot" class="cursor-dot"></div>
+  <div class="particles" id="particles" aria-hidden="true"></div>
+
+  <div class="mood-badge" id="mood-badge">
+    <span class="mood-icon" id="mood-icon">☾</span>
+    <span class="mood-text" id="mood-text">Midnight</span>
+  </div>
+
+  <header class="app-bar" id="app-bar">
+    <div class="app-bar-inner">
+      <a href="#hero" class="brand">
+        <span class="brand-mark"></span>
+        <span class="brand-name">Aji Wira</span>
+      </a>
+      <div class="app-bar-actions">
+        <button class="sound-btn" id="sound-btn" aria-label="Toggle sound" title="Sound on/off">
+          <svg class="icon-sound-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+          <svg class="icon-sound-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>
+        <button class="menu-btn" id="menu-btn" aria-label="Menu">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <nav class="menu-nav">
+      <a href="#hero" class="menu-item" data-index="01"><span class="menu-item-text">Home</span></a>
+      <a href="#about" class="menu-item" data-index="02"><span class="menu-item-text">About</span></a>
+      <a href="#work" class="menu-item" data-index="03"><span class="menu-item-text">Work</span></a>
+      <a href="#expertise" class="menu-item" data-index="04"><span class="menu-item-text">Skills</span></a>
+      <a href="#experience" class="menu-item" data-index="05"><span class="menu-item-text">Journey</span></a>
+      <a href="#contact" class="menu-item" data-index="06"><span class="menu-item-text">Connect</span></a>
+    </nav>
+    <div class="menu-footer">
+      <p class="menu-mood-hint">Scroll to feel the seasons change</p>
+      <a href="mailto:ajiiwra@gmail.com" class="menu-email">ajiiwra@gmail.com</a>
+    </div>
+  </div>
+
+  <nav class="section-dots" id="section-dots" aria-label="Sections">
+    <a href="#hero" class="dot active" data-section="hero"></a>
+    <a href="#about" class="dot" data-section="about"></a>
+    <a href="#work" class="dot" data-section="work"></a>
+    <a href="#expertise" class="dot" data-section="expertise"></a>
+    <a href="#experience" class="dot" data-section="experience"></a>
+    <a href="#contact" class="dot" data-section="contact"></a>
+  </nav>
+
+  <main>
+    <!-- HERO -->
+    <section id="hero" class="hero" data-mood="midnight">
+      <canvas id="canvas3d"></canvas>
+      <div class="hero-gradient"></div>
+      <div class="hero-content" data-parallax="0.08">
+        <div class="hero-status">
+          <span class="status-dot"></span>
+          Open for collaborations
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-line"><span class="hero-word">Building</span> <span class="hero-word">worlds</span></span>
+          <span class="hero-line accent"><span class="hero-word">that feel</span></span>
+        </h1>
+        <p class="hero-subtitle">Full-Stack Developer · Creative Technologist</p>
+        <p class="hero-bio">I craft digital experiences that hit different — precise code, bold energy, and a little bit of magic.</p>
+        <div class="hero-actions">
+          <a href="#work" class="btn-primary magnetic" data-magnetic>
+            <span>Explore work</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#contact" class="btn-ghost magnetic" data-magnetic>Say hi</a>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <span class="scroll-hint">Scroll to change the vibe</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section about" data-mood="dawn">
+      <div class="wrap">
+        <div class="section-label" data-parallax="0.05">
+          <span class="label-num">01</span>
+          <span class="label-text">About · Dawn</span>
+        </div>
+        <div class="about-layout">
+          <div class="about-visual" data-parallax="0.12">
+            <div class="portrait">
+              <div class="portrait-inner">
+                <div class=""><img src="cyber-minecraft.jpg" alt="profile" />
+                </div>
+              </div>
+              <div class="portrait-ring"></div>
+              <div class="portrait-float f1"></div>
+              <div class="portrait-float f2"></div>
+              <div class="portrait-float f3"></div>
+            </div>
+            <!-- Animated scene illustration -->
+            <div class="anim-scene scene-dawn">
+              <div class="scene-sun"></div>
+              <div class="scene-hill h1"></div>
+              <div class="scene-hill h2"></div>
+              <div class="scene-block sb1"></div>
+              <div class="scene-block sb2"></div>
+            </div>
+          </div>
+          <div class="about-text" data-parallax="0.06">
+            <h2 class="about-heading">Code with feeling.</h2>
+            <p class="about-lead">Every project starts with a mood. I turn that energy into interfaces people actually remember.</p>
+            <p class="about-body">6+ years deep in the craft — from late-night prototypes to products that ship and stick. I care about the details that make people stop scrolling.</p>
+            <div class="about-metrics">
+              <div class="metric">
+                <span class="metric-value" data-count="60">0</span><span class="metric-suffix">+</span>
+                <span class="metric-label">Projects shipped</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value" data-count="6">0</span>
+                <span class="metric-label">Years creating</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value" data-count="15">0</span><span class="metric-suffix">+</span>
+                <span class="metric-label">Happy clients</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" class="section work" data-mood="daylight">
+      <div class="wrap">
+        <div class="section-label" data-parallax="0.05">
+          <span class="label-num">02</span>
+          <span class="label-text">Work · Daylight</span>
+        </div>
+        <h2 class="section-heading" data-parallax="0.04">Things that made an impact</h2>
+
+        <div class="work-list">
+          <article class="work-card" data-tilt data-parallax="0.03">
+            <div class="work-media">
+              <div class="work-thumb t1">
+                <!-- Animated mini scene -->
+                <div class="thumb-anim">
+                  <div class="ta-block ta-b1"></div>
+                  <div class="ta-block ta-b2"></div>
+                  <div class="ta-block ta-b3"></div>
+                  <div class="ta-grid"></div>
+                </div>
+                <div class="work-shimmer"></div>
+              </div>
+            </div>
+            <div class="work-body">
+              <div class="work-meta">
+                <span class="work-year">2025</span>
+                <span class="work-tag">Interactive</span>
+              </div>
+              <h3 class="work-title">VoxelCraft Studio</h3>
+              <p class="work-desc">Real-time collaborative voxel editor. Build worlds together, export anything.</p>
+              <div class="work-tech"><span>Three.js</span><span>WebSocket</span><span>React</span></div>
+              <div class="work-links">
+                <a href="#" class="work-link">Live Demo</a>
+                <a href="#" class="work-link">Source</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="work-card" data-tilt data-parallax="0.05">
+            <div class="work-media">
+              <div class="work-thumb t2">
+                <div class="thumb-anim">
+                  <div class="ta-chart">
+                    <div class="ta-bar" style="--h:60%"></div>
+                    <div class="ta-bar" style="--h:85%"></div>
+                    <div class="ta-bar" style="--h:45%"></div>
+                    <div class="ta-bar" style="--h:95%"></div>
+                    <div class="ta-bar" style="--h:70%"></div>
+                  </div>
+                </div>
+                <div class="work-shimmer"></div>
+              </div>
+            </div>
+            <div class="work-body">
+              <div class="work-meta">
+                <span class="work-year">2024</span>
+                <span class="work-tag">Platform</span>
+              </div>
+              <h3 class="work-title">Nexus Analytics</h3>
+              <p class="work-desc">Data that actually makes sense. Real-time charts, zero lag, maximum clarity.</p>
+              <div class="work-tech"><span>TypeScript</span><span>D3.js</span><span>Node</span></div>
+              <div class="work-links">
+                <a href="#" class="work-link">Live Demo</a>
+                <a href="#" class="work-link">Source</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="work-card" data-tilt data-parallax="0.03">
+            <div class="work-media">
+              <div class="work-thumb t3">
+                <div class="thumb-anim">
+                  <div class="ta-cart">
+                    <div class="ta-box"></div>
+                    <div class="ta-box"></div>
+                    <div class="ta-box"></div>
+                  </div>
+                </div>
+                <div class="work-shimmer"></div>
+              </div>
+            </div>
+            <div class="work-body">
+              <div class="work-meta">
+                <span class="work-year">2024</span>
+                <span class="work-tag">Commerce</span>
+              </div>
+              <h3 class="work-title">Echo Commerce</h3>
+              <p class="work-desc">Headless storefront built for speed. Sub-second loads, conversion-obsessed.</p>
+              <div class="work-tech"><span>Next.js</span><span>Stripe</span><span>PostgreSQL</span></div>
+              <div class="work-links">
+                <a href="#" class="work-link">Live Demo</a>
+                <a href="#" class="work-link">Source</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="work-card" data-tilt data-parallax="0.05">
+            <div class="work-media">
+              <div class="work-thumb t4">
+                <div class="thumb-anim">
+                  <div class="ta-pulse">
+                    <div class="ta-ring r1"></div>
+                    <div class="ta-ring r2"></div>
+                    <div class="ta-core"></div>
+                  </div>
+                </div>
+                <div class="work-shimmer"></div>
+              </div>
+            </div>
+            <div class="work-body">
+              <div class="work-meta">
+                <span class="work-year">2023</span>
+                <span class="work-tag">AI / UI</span>
+              </div>
+              <h3 class="work-title">Pulse Interface</h3>
+              <p class="work-desc">Conversational UI that adapts. Motion systems + accessibility that just works.</p>
+              <div class="work-tech"><span>Vanilla JS</span><span>Web Speech</span><span>CSS 3D</span></div>
+              <div class="work-links">
+                <a href="#" class="work-link">Live Demo</a>
+                <a href="#" class="work-link">Source</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERTISE -->
+    <section id="expertise" class="section expertise" data-mood="golden">
+      <div class="wrap">
+        <div class="section-label" data-parallax="0.05">
+          <span class="label-num">03</span>
+          <span class="label-text">Skills · Golden Hour</span>
+        </div>
+        <h2 class="section-heading" data-parallax="0.04">What I bring to the table</h2>
+        <div class="expertise-grid">
+          <div class="exp-card" data-tilt data-parallax="0.04">
+            <div class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg></div>
+            <h3>Frontend</h3>
+            <p>Interfaces that feel alive. TypeScript, React, motion, and performance.</p>
+            <ul class="exp-tags"><li>TypeScript</li><li>React</li><li>Three.js</li><li>GSAP</li></ul>
+          </div>
+          <div class="exp-card" data-tilt data-parallax="0.06">
+            <div class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+            <h3>Backend</h3>
+            <p>Solid foundations. APIs, databases, and infra that stay out of the way.</p>
+            <ul class="exp-tags"><li>Node.js</li><li>Python</li><li>PostgreSQL</li><li>Docker</li></ul>
+          </div>
+          <div class="exp-card" data-tilt data-parallax="0.04">
+            <div class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <h3>Creative Tech</h3>
+            <p>WebGL, shaders, generative systems — the fun experimental layer.</p>
+            <ul class="exp-tags"><li>WebGL</li><li>Shaders</li><li>Canvas</li><li>Generative</li></ul>
+          </div>
+          <div class="exp-card" data-tilt data-parallax="0.06">
+            <div class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></div>
+            <h3>Product Sense</h3>
+            <p>Design systems, a11y, and the polish that makes people stay.</p>
+            <ul class="exp-tags"><li>Figma</li><li>Systems</li><li>A11y</li><li>UX</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section experience" data-mood="dusk">
+      <div class="wrap">
+        <div class="section-label" data-parallax="0.05">
+          <span class="label-num">04</span>
+          <span class="label-text">Journey · Dusk</span>
+        </div>
+        <h2 class="section-heading" data-parallax="0.04">Where I've been</h2>
+        <div class="timeline">
+          <div class="tl-item" data-parallax="0.03">
+            <div class="tl-marker"></div>
+            <div class="tl-content">
+              <span class="tl-date">2023 — Now</span>
+              <h3>Senior Frontend Engineer</h3>
+              <p class="tl-company">Aether Labs</p>
+              <p class="tl-desc">Leading interactive product work and performance architecture for teams that move fast.</p>
+            </div>
+          </div>
+          <div class="tl-item" data-parallax="0.05">
+            <div class="tl-marker"></div>
+            <div class="tl-content">
+              <span class="tl-date">2020 — 2023</span>
+              <h3>Full-Stack Developer</h3>
+              <p class="tl-company">PixelForge Studio</p>
+              <p class="tl-desc">Built products and experimental tech for gaming and media brands. Lots of late nights, good results.</p>
+            </div>
+          </div>
+          <div class="tl-item" data-parallax="0.03">
+            <div class="tl-marker"></div>
+            <div class="tl-content">
+              <span class="tl-date">2018 — 2020</span>
+              <h3>Frontend Developer</h3>
+              <p class="tl-company">Nova Digital</p>
+              <p class="tl-desc">Shipped interfaces and design systems for startups. Learned what actually matters.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section contact" data-mood="night">
+      <div class="wrap">
+        <div class="section-label" data-parallax="0.05">
+          <span class="label-num">05</span>
+          <span class="label-text">Connect · Night</span>
+        </div>
+        <h2 class="section-heading contact-heading" data-parallax="0.04">Let's make something that hits different</h2>
+        <p class="contact-intro" data-parallax="0.03">Got an idea that keeps you up at night? Let's talk about building it.</p>
+
+        <div class="contact-actions" data-parallax="0.05">
+          <a href="mailto:ajiiwra@gmail.com" class="contact-main magnetic" data-magnetic>
+            <span class="contact-main-label">Drop a line</span>
+            <span class="contact-main-value">TEXT ME</span>
+          </a>
+        </div>
+
+        <div class="contact-socials" data-parallax="0.04">
+          <a href="https://wa.me/6283173705726" class="social-link" target="_blank" rel="noopener">WhatsApp</a>
+          <a href="https://id.linkedin.com/in/aji-wira-nugroho-730523330" class="social-link" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://www.instagram.com/wirak_/" class="social-link" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://github.com/" class="social-link" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button class="back-top" id="back-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>© 2026 Aji Wira</p>
+      <p class="footer-sub">SAYA AKAN LAWAN.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
+  <script src="script.js"></script>
+</body>
+</html>
