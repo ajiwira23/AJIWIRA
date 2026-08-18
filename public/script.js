@@ -31,8 +31,8 @@
     enabled: !/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && location.protocol !== 'file:'
   };
 
-  const WELCOME_TEXT = "Yohoho. selamat datang di Portofolioku. Kenalin aku Aji Wira. Siap. Scroll buat keliling.";
-  const WELCOME_KEY = 'welcome';
+  const WELCOME_TEXT = "Yohoho. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore..";
+  const WELCOME_KEY = '';
 
   // AudioBuffer disimpan selama halaman hidup. Cache Storage menyimpan hasil antar reload.
   const elevenCache = new Map();
@@ -165,12 +165,12 @@
   }
 
   const sectionScripts = {
-    hero: "Yossha. Ini portofolioku. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
+    hero: "Yossha. Kenalin aku Aji Wira. Full-stack developer yang suka bikin hal keren. Scroll aja buat explore.",
     about: "Yokey, About me thaim.",
     work: "Work zone.",
     expertise: "Skill check.",
     experience: "Jhourney far.",
-    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS ATOS!."
+    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya."
   };
 
   function pickNaturalMaleVoice() {
