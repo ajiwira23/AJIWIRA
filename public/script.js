@@ -170,7 +170,7 @@
     work: "Work zone.",
     expertise: "Skill check.",
     experience: "Jhourney far.",
-    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS MERONGOSS!."
+    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya dann. ADIOS EL KONTOLOS PARAGOS ATOS!."
   };
 
   function pickNaturalMaleVoice() {
