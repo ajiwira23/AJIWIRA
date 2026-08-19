@@ -170,7 +170,7 @@
     work: "Work zone.",
     expertise: "Skill check.",
     experience: "Jhourney far.",
-    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, sampai jumpa di demo selanjutnya."
+    contact: "Last page. yaahhh sudah sampai akhir. terimakasih, dan, sampai jumpa!!."
   };
 
   function pickNaturalMaleVoice() {
